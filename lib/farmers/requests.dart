@@ -1,5 +1,3 @@
-import 'dart:html';
-import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -12,42 +10,59 @@ class Requests extends StatefulWidget {
 }
 
 class _RequestsState extends State<Requests> {
+  TextEditingController acresController = new TextEditingController();
+  TextEditingController serviceTypeController = new TextEditingController();
+  // TextEditingController comfirmPasswordController = new TextEditingController();
+  // TextEditingController dateOfBirthController = new TextEditingController();
   String _dropDownValue = "region";
-  Future<void> addUser() {
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
-    // Call the user's CollectionReference to add a new user
-    return users
-        .add({
-          // 'dateOfBirth': dateOfBirthController.text,
-          // 'phoneNumber': phoneNumberController.text,
-          // 'accountType': accountTypeController.text,
-          // 'email': emailController.text,
-          // 'gender': genderController.text,
-          // 'password': passwordController.text,
-          // 'comfirmPassword': comfirmPasswordController.text,
-        })
-        .then((value) => print("User Added"))
-        .catchError((error) => print("Failed to add user: $error"));
-  }
+  final Stream<QuerySnapshot>? _types =
+      FirebaseFirestore.instance.collection('service_types').snapshots();
+
+  String acres = '',
+      serviceType = '',
+      userDateOfBirth = '',
+      userPhoneNumber = '';
+  // Future<void> addUser() {
+
+  //   // Call the user's CollectionReference to add a new user
+  //   return users
+  //       .add({
+  //         'acres': acresController.text,
+  //         'serviceType': serviceTypeController.text,
+  //         // 'accountType': accountTypeController.text,
+  //         // 'email': emailController.text,
+  //         // 'gender': genderController.text,
+  //         // 'password': passwordController.text,
+  //         // 'comfirmPassword': comfirmPasswordController.text,
+  //       })
+  //       .then((value) => print("User Added"))
+  //       .catchError((error) => print("Failed to add user: $error"));
+  // }
 
   @override
   Widget build(BuildContext context) {
+    Stream<QuerySnapshot<Map<String, dynamic>>> users =
+        FirebaseFirestore.instance.collection('users').snapshots();
+
     return Scaffold(
       body: ListView(
         children: [
           Column(
             children: [
-              Row(
-                children: [
-                  Icon(Icons.book),
-                  Text('Request equipment service'),
-                ],
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Row(
+                  children: [
+                    Icon(Icons.book),
+                    Text('Request equipment service'),
+                  ],
+                ),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('Hiring'),
-                  Icon(Icons.cut_sharp),
+                  IconButton(onPressed: () {}, icon: Icon(Icons.cut_sharp)),
                 ],
               ),
               Divider(
@@ -66,29 +81,44 @@ class _RequestsState extends State<Requests> {
                 color: Colors.black,
               ),
               Text('Service Type'),
-              DropdownButton(
-                  hint: _dropDownValue == ValueKey
-                      ? Text("Dropdown")
-                      : Text(_dropDownValue),
-                  isExpanded: true,
-                  iconSize: 30,
-                  items: [
-                    "School of Biological Sciences",
-                    "School of Agriculture",
-                    "Business School",
-                    "Business School",
-                  ].map((val) {
-                    return DropdownMenuItem<String>(
-                      alignment: AlignmentDirectional.center,
-                      value: val,
-                      child: Text(val),
-                    );
-                  }).toList(),
-                  onChanged: (val) {
-                    setState(() {
-                      _dropDownValue = val as String;
-                    });
-                  }),
+              StreamBuilder<QuerySnapshot>(
+                stream: users,
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  if (snapshot.hasError) {
+                    return Text("Something went wrong");
+                  }
+
+                  if (snapshot.hasData && !snapshot.data!.exists) {
+                    return Text("Document does not exist");
+                  }
+
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    Map<String, dynamic> data =
+                        snapshot.data!.data() as Map<String, dynamic>;
+                    debugPrint(data.toString());
+                    // return DropdownButton(
+                    //     hint: _dropDownValue == ValueKey
+                    //         ? Text("Dropdown")
+                    //         : Text(_dropDownValue),
+                    //     isExpanded: true,
+                    //     iconSize: 30,
+                    //     items: snapshot.data.map((val) {
+                    //       return DropdownMenuItem<String>(
+                    //         alignment: AlignmentDirectional.center,
+                    //         value: val,
+                    //         child: Text(val),
+                    //       );
+                    //     }).toList(),
+                    //     onChanged: (val) {
+                    //       setState(() {
+                    //         _dropDownValue = val as String;
+                    //       });
+                    //     });
+                  }
+
+                  return Text("loading");
+                },
+              ),
               Padding(
                 padding: const EdgeInsets.all(12.0),
                 // child: Text(
@@ -248,14 +278,10 @@ class Location extends StatelessWidget {
             Spacer(),
             Expanded(
                 child: SizedBox(
-          
               child: ElevatedButton(
                   onPressed: () {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) =>
-                       Continue()
-                    
-                    ));
+                        MaterialPageRoute(builder: (context) => Continue()));
                   },
                   child: const Center(child: Text('Next'))),
             )),

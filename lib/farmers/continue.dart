@@ -8,7 +8,7 @@ class Continue extends StatefulWidget {
 }
 
 class _ContinueState extends State<Continue> {
-  String _dropDownValue = "region";
+  String _dropDownValue = "choose your network";
   @override
   Widget build(BuildContext context) {
     return Scaffold(

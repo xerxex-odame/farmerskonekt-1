@@ -1,693 +1,155 @@
+import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farmers_konekt/farmers/das.dart';
 import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:syncfusion_flutter_charts/sparkcharts.dart';
+import 'package:video_player/video_player.dart';
 
-class UserDashBoard extends StatefulWidget {
-  const UserDashBoard({ Key? key }) : super(key: key);
+class UserDashBoardr extends StatefulWidget {
+  const UserDashBoardr({Key? key}) : super(key: key);
 
   @override
-  State<UserDashBoard> createState() => _UserDashBoardState();
+  State<UserDashBoardr> createState() => _UserDashBoardrState();
 }
 
-class _UserDashBoardState extends State<UserDashBoard> {
+late VideoPlayerController _controller;
+// List<SalesData> _chartData;
+//String _SalesData = 'value';
+List<_SalesData> data = [
+  _SalesData('Jan', 1),
+  _SalesData('Feb', 28),
+  _SalesData('Mar', 34),
+  _SalesData('Apr', 32),
+  _SalesData('May', 40),
+  _SalesData('Jun', 34),
+  _SalesData('Jul', 32),
+  _SalesData('Aug,', 40),
+  _SalesData('Sept', 34),
+  _SalesData('Oct', 32),
+  _SalesData('Nov', 40),
+  _SalesData('Dec', 34),
+];
+
+//String _getChartData = '';
+// @override
+// void iniState() {
+//   _chartData = getChartData();
+//   super.initState();
+// }
+
+class _UserDashBoardrState extends State<UserDashBoardr> {
+  @override
+  void initState() {
+    super.initState();
+    _controller = VideoPlayerController.network(
+        'http://www.sample-videos.com/video123/mp4/720/big_buck_bunny_720p_20mb.mp4')
+      ..initialize().then((_) {
+        _controller.play();
+        _controller.setLooping(true);
+        var _initializeVideoPlayerFuture = _controller.initialize();
+        // Ensure the first frame is shown after the video is initialized
+        setState(() {
+          _controller.play();
+        });
+      });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Dashboard'),
-        actions: [
-          PopupMenuButton(
-            child: Center(child: Text('Hire me')),
-            itemBuilder: (context) {
-              return List.generate(1, (index) {
-                return PopupMenuItem(
-                  child: Column(children: [
-                    Text('Clic here to choose  a quipment youre lookig for!'),
-                    TextButton(onPressed: () {}, child: Text('Equipment')),
-                  ]),
-                );
-              });
-            },
-          ),
-          IconButton(onPressed: () {}, icon: Icon(Icons.notifications)),
-          CircleAvatar(
-            backgroundColor: Colors.redAccent,
-            child: const Text('ko'),
-          ),
-          PopupMenuButton(
-            //initialValue: 0,
-            child: Center(child: Icon(Icons.menu)),
-            itemBuilder: (context) {
-              return List.generate(1, (index) {
-                return PopupMenuItem(
-                    value: index,
-                    child: Column(
-                      children: [
-                        TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Dash()));
-                            },
-                            child: Text('Change Password')),
-                        TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Dash()));
-                            },
-                            child: Text('Change personal inf')),
-                        TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Dash()));
-                            },
-                            child: Text('Settings')),
-                        TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Dash()));
-                            },
-                            child: Text('History')),
-                        TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Dash()));
-                            },
-                            child: Text('Change Password')),
-                        TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Dash()));
-                            },
-                            child: Text('Contact Us')),
-                      ],
-                    ));
-              });
-            },
-          ),
-        ],
-      ),
-      drawer: Drawer(
-        backgroundColor: Colors.greenAccent,
-        child: ListView(
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(''),
+        ),
+        body: Column(
           children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Color.fromARGB(255, 47, 101, 145),
+          Card(
+            child: Column(children: [
+              SizedBox.expand(
+                child: FittedBox(
+                  fit: BoxFit.cover,
+                  child: SizedBox(
+                    width: _controller.value.size.width * 0.5,
+                    height: _controller.value.size.height * 0.5,
+                    child: VideoPlayer(_controller),
+                  ),
+                ),
               ),
-              child: Text('Seth Abbey'),
+            ]
             ),
-            Divider(
-              color: Colors.blueAccent,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Icon(Icons.chat_sharp),
-                Text('DashBoard'),
-              ],
-            ),
-            Divider(
-              color: Colors.blueAccent,
-            ),
-            Text('Equipment request'),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Icon(Icons.refresh),
-                TextButton(onPressed: () {}, child: Text('All Request')),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Icon(Icons.hide_image_rounded),
-                TextButton(onPressed: () {}, child: Text('Hiring')),
-              ],
-            ),
-            Divider(
-              color: Colors.black,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Text(
-                'Actions',
-                textAlign: TextAlign.start,
-                style: TextStyle(color: Colors.white),
+          ),
+          Row(
+            //mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Text('The chart beside shows the tractor services you requested'),
+              Expanded(
+                child: SfCartesianChart(
+                    primaryXAxis: CategoryAxis(),
+                    // Chart title
+                    title: ChartTitle(text: 'Request history'),
+                    // Enable legend
+                    legend: Legend(isVisible: true),
+                    // Enable tooltip
+                    tooltipBehavior: TooltipBehavior(enable: true),
+                    series: <ChartSeries<_SalesData, String>>[
+                      LineSeries<_SalesData, String>(
+                          dataSource: data,
+                          xValueMapper: (_SalesData sales, _) => sales.year,
+                          yValueMapper: (_SalesData sales, _) => sales.sales,
+                          name: 'Request Odered',
+                          // Enable data label
+                          dataLabelSettings: DataLabelSettings(isVisible: true))
+                    ]),
               ),
-            ),
-            Row(
-              children: [
-                Icon(Icons.settings),
-                TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      'Settings',
-                      textAlign: TextAlign.start,
-                      style: TextStyle(color: Colors.white),
-                    )),
-              ],
-            ),
-            Row(
-              children: [
-                Icon(Icons.restart_alt),
-                TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      'Log out',
-                      textAlign: TextAlign.start,
-                      style: TextStyle(color: Colors.white),
-                    )),
-              ],
-            ),
-          ],
-        ),
-      ),
-      body: Container(
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Column(children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                GestureDetector(
-                  onTap: () {},
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Container(
-                      color: Colors.blueAccent,
-                      child: Column(children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('0'),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Icon(Icons.refresh_rounded)
-                          ],
-                        ),
-                        Text('Total Request'),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Divider(color: Colors.lightBlue),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('View'),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Icon(Icons.forward),
-                          ],
-                        )
-                      ]),
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {},
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Container(
-                      color: Colors.blueAccent,
-                      child: Column(children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('0'),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Icon(Icons.refresh_rounded)
-                          ],
-                        ),
-                        Text('Pending Request'),
-                        Divider(color: Colors.lightBlue),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('View'),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Icon(Icons.forward),
-                          ],
-                        )
-                      ]),
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {},
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Container(
-                      color: Colors.blueAccent,
-                      child: Column(children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('0'),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Icon(Icons.refresh_rounded)
-                          ],
-                        ),
-                        Text('Assigned Request'),
-                        Divider(color: Colors.lightBlue),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('View'),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Icon(Icons.forward),
-                          ],
-                        )
-                      ]),
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {},
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Container(
-                      color: Colors.blueAccent,
-                      child: Column(children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('0'),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Icon(Icons.refresh_rounded)
-                          ],
-                        ),
-                        Text('Completed Request'),
-                        Divider(color: Colors.lightBlue),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('View'),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Icon(Icons.forward),
-                          ],
-                        )
-                      ]),
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {},
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Container(
-                      color: Colors.blueAccent,
-                      child: Column(children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('0'),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Icon(Icons.refresh_rounded)
-                          ],
-                        ),
-                        Text('Cancelled Request'),
-                        Divider(color: Colors.lightBlue),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('View'),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Icon(Icons.forward),
-                          ],
-                        )
-                      ]),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            Container(
-              width: 400,
-              child: Column(
-                //color: Colors.amberAccent,
-                children: [
-                Row(
-                  children: [
-                    Text('Equipment Request'),
-                    PopupMenuButton(
-                      child: Center(child: Text('Weekly')),
-                      itemBuilder: (context) {
-                        return List.generate(1, (index) {
-                          return PopupMenuItem(
-                            child: Column(children: [
-                              Text('Choose time range'),
-                              TextButton(
-                                  onPressed: () {}, child: Text('weekly')),
-                              TextButton(
-                                  onPressed: () {}, child: Text('Monthly')),
-                              TextButton(
-                                  onPressed: () {}, child: Text('Yearly')),
-                            ]),
-                          );
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              ]),
-            ),
-            Text('No data avaliable'),
-            Divider(
-              color: Colors.blueGrey,
-            ),
-            Row(
-              children: [
-                Icon(Icons.plus_one_outlined),
-                ElevatedButton(
-                    onPressed: () {},
-                    child: Text(
-                      'Request Service',
-                      style: TextStyle(color: Colors.white),
-                    )),
-              ],
-            ),
-            SizedBox(
-              width: 10,
-            ),
-            Container(
-              height: 200,
-              width: 300,
-              color: Colors.blueGrey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.replay_outlined),
-                      Text('Recent Requests')
-                    ],
-                  ),
-                  Text('No data avaliable yet'),
-                ],
-              ),
-            ),
-          ]),
-        ),
-      ),
 
-      // body: ListView(
-      //   children: [
-      //     SizedBox(
-      //       //height: MediaQuery.of(context).size.height / 4,
-      //       child: ListView(
-      //         scrollDirection: Axis.horizontal,
-      //         children: [
-
-      //           GestureDetector(
-      //             onTap: () {
-      //               Navigator.push(context,
-      //                   MaterialPageRoute(builder: (context) => LogIn()));
-      //             },
-      //             child: Container(
-      //               height: MediaQuery.of(context).size.height / 2,
-      //               width: MediaQuery.of(context).size.width / 2,
-      //               color: Colors.lightBlue,
-      //               child: Column(
-      //                 children: [
-      //                   Padding(
-      //                     padding: const EdgeInsets.all(20.0),
-      //                     child: Card(
-      //                       color: Colors.lightBlueAccent,
-      //                       child: Row(
-      //                         children: [
-      //                           Row(
-      //                             mainAxisAlignment:
-      //                                 MainAxisAlignment.spaceBetween,
-      //                             children: [
-      //                               Text('0'),
-      //                               SizedBox(
-      //                                 width: 220,
-      //                               ),
-      //                               Icon(Icons.refresh_sharp),
-      //                             ],
-      //                           ),
-      //                         ],
-      //                       ),
-      //                     ),
-      //                   ),
-      //                   Text('Total Request'),
-      //                   Divider(
-      //                     color: Colors.black,
-      //                   ),
-      //                   Padding(
-      //                     padding: const EdgeInsets.all(20.0),
-      //                     child: Row(
-      //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //                       //crossAxisAlignment: CrossAxisAlignment.baseline,
-      //                       children: [
-      //                         Text('Views'),
-      //                         // SizedBox(
-      //                         //   width: 50,
-      //                         // ),
-      //                         Icon(Icons.forward),
-      //                       ],
-      //                     ),
-      //                   )
-      //                 ],
-      //               ),
-      //             ),
-      //           ),
-      //           Card(
-      //             child: Container(
-      //                height: MediaQuery.of(context).size.height / 2,
-      //               width: MediaQuery.of(context).size.width / 2,
-      //               color: Colors.redAccent,
-      //               child: Column(
-      //                 children: [
-      //                   Padding(
-      //                     padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
-      //                   ),
-      //                   Row(
-      //                     children: [
-      //                       Padding(
-      //                         padding: const EdgeInsets.all(15.0),
-      //                         child: Text('0'),
-      //                       ),
-      //                       SizedBox(
-      //                         width: 40,
-      //                       )
-      //                     ],
-      //                   ),
-      //                   Text('Pending Request'),
-      //                   Divider(
-      //                     color: Colors.black,
-      //                   ),
-      //                   Padding(
-      //                     padding: const EdgeInsets.all(20.0),
-      //                     child: Row(
-      //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //                       children: [
-      //                         Text('Views'),
-      //                         SizedBox(
-      //                           width: 40,
-      //                         ),
-      //                         Icon(Icons.forward),
-      //                       ],
-      //                     ),
-      //                   )
-      //                 ],
-      //               ),
-      //             ),
-      //           ),
-      //           Card(
-      //             child: Container(
-      //               //height: MediaQuery.of(context).size.height / 4,
-      //               //width: MediaQuery.of(context).size.width / 4,
-      //               color: Colors.greenAccent,
-      //               child: Column(
-      //                 children: [
-      //                   Padding(
-      //                     padding: EdgeInsets.fromLTRB(15.0, 5, 15, 5),
-      //                   ),
-      //                   Row(
-      //                     children: [
-      //                       Padding(
-      //                         padding: const EdgeInsets.all(15.0),
-      //                         child: Text('0'),
-      //                       ),
-      //                       SizedBox(
-      //                         width: 40,
-      //                       ),
-      //                     ],
-      //                   ),
-      //                   Text('Compled Request'),
-      //                   Divider(
-      //                     color: Colors.black,
-      //                   ),
-      //                   Row(
-      //                     children: [
-      //                       Text(''),
-      //                       SizedBox(
-      //                         width: 40,
-      //                       )
-      //                     ],
-      //                   ),
-      //                 ],
-      //               ),
-      //             ),
-      //           ),
-      //         ],
-      //       ),
-      //     ),
-      //     Padding(
-      //       padding: const EdgeInsets.all(40.0),
-      //       child: Center(
-      //         child: Container(
-      //           color: Colors.greenAccent,
-      //           height: MediaQuery.of(context).size.height / 3,
-      //           width: MediaQuery.of(context).size.width / 3,
-      //           child: Column(
-      //             crossAxisAlignment: CrossAxisAlignment.center,
-      //             children: [
-      //               Padding(
-      //                 padding: const EdgeInsets.all(15.0),
-      //                 child: Row(
-      //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //                   children: [
-      //                     Text('Equipment report'),
-      //                     Text('Monthly'),
-      //                   ],
-      //                 ),
-      //               ),
-      //               SizedBox(
-      //                 width: 40,
-      //               ),
-      //               Center(
-      //                 child: Text(
-      //                   'No chart available',
-      //                   textAlign: TextAlign.center,
-      //                 ),
-      //               ),
-      //               Row(
-      //                 children: [
-      //                   Icon(Icons.plus_one_outlined),
-      //                   SizedBox(
-      //                     width: 10,
-      //                   ),
-      //                    Text('Resquest service'),
-      //                 ],
-      //               )
-      //             ],
-      //           ),
-      //         ),
-      //       ),
-      //     ),
-      //     Center(
-      //       child: Padding(
-      //         padding: const EdgeInsets.all(20.0),
-      //         child: Container(
-      //           color: Colors.blueGrey,
-      //           //height: MediaQuery.of(context).size.height / 3,
-      //           //width: MediaQuery.of(context).size.width / 3,
-      //           child: Column(
-      //             crossAxisAlignment: CrossAxisAlignment.center,
-      //             children: [
-      //               Row(
-      //                 children: [
-      //                   Icon(Icons.read_more),
-      //                   SizedBox(
-      //                     width: 10,
-      //                   ),
-      //                   Text('requests'),
-      //                 ],
-      //               ),
-      //               Text('No item available yet'),
-      //             ],
-      //           ),
-      //         ),
-      //       ),
-      //     ),
-      //     GestureDetector(
-      //       onTap: () {
-      //         Navigator.push(
-      //             context, MaterialPageRoute(builder: (context) => LogIn()));
-      //       },
-      //       child: Container(
-      //         //height: MediaQuery.of(context).size.height / 4,
-      //         //width: MediaQuery.of(context).size.width / 4,
-      //         color: Colors.lightBlue,
-      //         child: Column(
-      //           children: [
-      //             Padding(
-      //               padding: const EdgeInsets.fromLTRB(15, 5, 15, 5),
-      //               child: Card(
-      //                 color: Colors.lightBlueAccent,
-      //                 child: Row(
-      //                   children: [
-      //                     Row(
-      //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //                       children: [
-      //                         Text('0'),
-      //                         SizedBox(
-      //                           width: 20,
-      //                         ),
-      //                         Icon(Icons.refresh_sharp),
-      //                       ],
-      //                     ),
-      //                   ],
-      //                 ),
-      //               ),
-      //             ),
-      //             Text('Total Request'),
-      //             Divider(
-      //               color: Colors.black,
-      //             ),
-      //             Padding(
-      //               padding: const EdgeInsets.all(20.0),
-      //               child: Row(
-      //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //                 //crossAxisAlignment: CrossAxisAlignment.baseline,
-      //                 children: [
-      //                   Text('Views'),
-      //                   SizedBox(
-      //                     width: 50,
-      //                   ),
-      //                   Icon(Icons.forward),
-      //                 ],
-      //               ),
-      //             )
-      //           ],
-      //         ),
-      //       ),
-      //     ),
-      //   ],
-      // ),
+              // Expanded(
+              //   child: Padding(
+              //     padding: const EdgeInsets.all(8.0),
+              //     //Initialize the spark charts widget
+              //     child: SfSparkLineChart.custom(
+              //       //Enable the trackball
+              //       trackball: SparkChartTrackball(
+              //           activationMode: SparkChartActivationMode.tap),
+              //       //Enable marker
+              //       marker: SparkChartMarker(
+              //           displayMode: SparkChartMarkerDisplayMode.all),
+              //       //Enable data label
+              //       labelDisplayMode: SparkChartLabelDisplayMode.all,
+              //       xValueMapper: (int index) => data[index].year,
+              //       yValueMapper: (int index) => data[index].sales,
+              //       dataCount: 1,
+              //     ),
+              //   ),
+              // ),
+            ],
+          ),
+          //Initialize the chart widget
+        ]),
+      ),
     );
   }
+
+  // List<SalesData> getChartData() {
+  //   final List<SalesData> chatData = [
+  //     SalesData(2017, 25),
+  //     SalesData(2018, 24),
+  //     SalesData(2019, 23),
+  //     SalesData(2020, 20),
+  //   ];
+  //   return chatData;
+  // }
 }
+
+class _SalesData {
+  _SalesData(this.year, this.sales);
+
+  final String year;
+  final double sales;
+}
+
+// class SalesData {
+//   SalesData(this.year, this.sales);
+//   final double year;
+//   final double sales;
+// }

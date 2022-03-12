@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farmers_konekt/farmers/das.dart';
 import 'package:flutter/material.dart';
 
@@ -16,9 +17,30 @@ class _userDetailsState extends State<userDetails> {
   TextEditingController locationController = new TextEditingController();
   TextEditingController fullNameController = new TextEditingController();
   //TextEditingController districtController = new TextEditingController();
+  CollectionReference users = FirebaseFirestore.instance.collection('users');
 
-String _dropDownValue = "region";
+  String _dropDownValue = "";
 //String _dropDownValue1 = "";
+
+  String farmLand = '', region = '', location = '', fullName = '';
+
+  Future<void> addUser() async {
+    return users
+        .add({
+          'region': regionController.text,
+          'location': locationController.text,
+          // 'accountType': accountTypeController.text,
+          'fullName': fullNameController.text,
+          // 'gender': genderController.text,
+          // 'password': passwordController.text,
+          // 'comfirmPassword': comfirmPasswordController.text,
+        })
+        .then((value) => print("User Added"))
+        .catchError((error) => print("Failed to add user: $error"));
+  }
+
+String _dropDownValue1 = "";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

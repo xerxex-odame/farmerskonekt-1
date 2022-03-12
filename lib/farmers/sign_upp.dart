@@ -204,7 +204,7 @@ class _RegisterState extends State<Register> {
                               UserCredential userCredential = await FirebaseAuth
                                   .instance
                                   .createUserWithEmailAndPassword(
-                                      email: "barry.allen@example.com",
+                                      email: "user@example.com",
                                       password: "SuperSecretPassword!");
                             } on FirebaseAuthException catch (e) {
                               if (e.code == 'weak-password') {
