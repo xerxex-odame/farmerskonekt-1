@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -82,7 +81,7 @@ class _RequestsState extends State<Requests> {
               ),
               Text('Service Type'),
               StreamBuilder<QuerySnapshot>(
-                stream: users,
+                stream: _types,
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (snapshot.hasError) {
                     return Text("Something went wrong");
@@ -96,24 +95,24 @@ class _RequestsState extends State<Requests> {
                     Map<String, dynamic> data =
                         snapshot.data!.data() as Map<String, dynamic>;
                     debugPrint(data.toString());
-                    // return DropdownButton(
-                    //     hint: _dropDownValue == ValueKey
-                    //         ? Text("Dropdown")
-                    //         : Text(_dropDownValue),
-                    //     isExpanded: true,
-                    //     iconSize: 30,
-                    //     items: snapshot.data.map((val) {
-                    //       return DropdownMenuItem<String>(
-                    //         alignment: AlignmentDirectional.center,
-                    //         value: val,
-                    //         child: Text(val),
-                    //       );
-                    //     }).toList(),
-                    //     onChanged: (val) {
-                    //       setState(() {
-                    //         _dropDownValue = val as String;
-                    //       });
-                    //     });
+                    return DropdownButton(
+                        hint: _dropDownValue == ValueKey
+                            ? Text("Dropdown")
+                            : Text(_dropDownValue),
+                        isExpanded: true,
+                        iconSize: 30,
+                        items: snapshot.data.map((val) {
+                          return DropdownMenuItem<String>(
+                            alignment: AlignmentDirectional.center,
+                            value: val,
+                            child: Text(val),
+                          );
+                        }).toList(),
+                        onChanged: (val) {
+                          setState(() {
+                            _dropDownValue = val as String;
+                          });
+                        });
                   }
 
                   return Text("loading");

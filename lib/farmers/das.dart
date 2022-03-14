@@ -1,9 +1,11 @@
 import 'package:farmers_konekt/change_pas.dart';
 import 'package:farmers_konekt/farmers/notification.dart';
 import 'package:farmers_konekt/farmers/settings.dart';
-import 'package:farmers_konekt/homeview/login.dart';
+//import 'package:farmers_konekt/homeview/login.dart';
 import 'package:farmers_konekt/message.dart';
 import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 
 class Dash extends StatefulWidget {
   const Dash({Key? key}) : super(key: key);
@@ -12,26 +14,42 @@ class Dash extends StatefulWidget {
   State<Dash> createState() => _DashState();
 }
 
+List<_SalesData> data = [
+  _SalesData('Jan', 1),
+  _SalesData('Feb', 28),
+  _SalesData('Mar', 34),
+  _SalesData('Apr', 32),
+  _SalesData('May', 40),
+  _SalesData('Jun', 34),
+  _SalesData('Jul', 32),
+  _SalesData('Aug,', 40),
+  _SalesData('Sept', 34),
+  _SalesData('Oct', 32),
+  _SalesData('Nov', 40),
+  _SalesData('Dec', 34),
+];
+
 class _DashState extends State<Dash> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return SafeArea(
+        child: Scaffold(
       appBar: AppBar(
         title: Text('Dashboard'),
         actions: [
-          PopupMenuButton(
-            child: Center(child: Text('Hire me')),
-            itemBuilder: (context) {
-              return List.generate(1, (index) {
-                return PopupMenuItem(
-                  child: Column(children: [
-                    Text('Clic here to choose  a quipment youre lookig for!'),
-                    TextButton(onPressed: () {}, child: Text('Equipment')),
-                  ]),
-                );
-              });
-            },
-          ),
+          // PopupMenuButton(
+          //   child: Center(child: Text('Hire me')),
+          //   itemBuilder: (context) {
+          //     return List.generate(1, (index) {
+          //       return PopupMenuItem(
+          //         child: Column(children: [
+          //           Text('Clic here to choose  a quipment youre lookig for!'),
+          //           TextButton(onPressed: () {}, child: Text('Equipment')),
+          //         ]),
+          //       );
+          //     });
+          //   },
+          // ),
           IconButton(onPressed: () {}, icon: Icon(Icons.notifications)),
           CircleAvatar(
             backgroundColor: Colors.redAccent,
@@ -431,6 +449,54 @@ class _DashState extends State<Dash> {
                 ),
               ),
             ),
+            Row(
+              //mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Text(
+                    'The chart beside shows the tractor services you requested'),
+                Expanded(
+                  child: SfCartesianChart(
+                      primaryXAxis: CategoryAxis(),
+                      // Chart title
+                      title: ChartTitle(text: 'Request history'),
+                      // Enable legend
+                      legend: Legend(isVisible: true),
+                      // Enable tooltip
+                      tooltipBehavior: TooltipBehavior(enable: true),
+                      series: <ChartSeries<_SalesData, String>>[
+                        LineSeries<_SalesData, String>(
+                            dataSource: data,
+                            xValueMapper: (_SalesData sales, _) => sales.year,
+                            yValueMapper: (_SalesData sales, _) => sales.sales,
+                            name: 'Request Odered',
+                            // Enable data label
+                            dataLabelSettings:
+                                DataLabelSettings(isVisible: true))
+                      ]),
+                ),
+                
+
+                // Expanded(
+                //   child: Padding(
+                //     padding: const EdgeInsets.all(8.0),
+                //     //Initialize the spark charts widget
+                //     child: SfSparkLineChart.custom(
+                //       //Enable the trackball
+                //       trackball: SparkChartTrackball(
+                //           activationMode: SparkChartActivationMode.tap),
+                //       //Enable marker
+                //       marker: SparkChartMarker(
+                //           displayMode: SparkChartMarkerDisplayMode.all),
+                //       //Enable data label
+                //       labelDisplayMode: SparkChartLabelDisplayMode.all,
+                //       xValueMapper: (int index) => data[index].year,
+                //       yValueMapper: (int index) => data[index].sales,
+                //       dataCount: 1,
+                //     ),
+                //   ),
+                // ),
+              ],
+            ),
           ]),
         ),
       ),
@@ -702,6 +768,13 @@ class _DashState extends State<Dash> {
       //     ),
       //   ],
       // ),
-    );
+    ));
   }
+}
+
+class _SalesData {
+  _SalesData(this.year, this.sales);
+
+  final String year;
+  final double sales;
 }

@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 //import 'package:month_year_picker/month_year_picker.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
 class Post extends StatefulWidget {
@@ -29,7 +30,12 @@ CollectionReference users = FirebaseFirestore.instance.collection('users');
 String _dropDownValue = "";
 //String _dropDownValue1 = "";
 
-String  dateExpire = '', expire = '', make = '', modal = '', licensePlateNumber = '', year = '';
+String dateExpire = '',
+    expire = '',
+    make = '',
+    modal = '',
+    licensePlateNumber = '',
+    year = '';
 
 Future<void> addUser() async {
   return users
@@ -42,7 +48,7 @@ Future<void> addUser() async {
         'fullName': yearController.text,
         'licensePlateNumber': licensePlateNumberController.text,
         // 'accountType': accountTypeController.text,
-       // 'fullName': yearController.text,
+        // 'fullName': yearController.text,
         //'licensePlateNumber': licensePlateNumberController.text,
         // 'password': passwordController.text,
         // 'comfirmPassword': comfirmPasswordController.text,
@@ -50,13 +56,55 @@ Future<void> addUser() async {
       .then((value) => print("User Added"))
       .catchError((error) => print("Failed to add user: $error"));
 }
+
 final ImagePicker _picker = ImagePicker();
 File? _postImage;
 
 DateTime? _selected;
 String _date = DateTime.now().toUtc().toString();
+Future<File?> cropImage({required File imageFile}) async {
+  return await ImageCropper().cropImage(
+      sourcePath: imageFile.path,
+      aspectRatioPresets: Platform.isAndroid
+          ? [
+              CropAspectRatioPreset.square,
+              CropAspectRatioPreset.ratio3x2,
+              CropAspectRatioPreset.original,
+              CropAspectRatioPreset.ratio4x3,
+              CropAspectRatioPreset.ratio16x9
+            ]
+          : [
+              CropAspectRatioPreset.original,
+              CropAspectRatioPreset.square,
+              CropAspectRatioPreset.ratio3x2,
+              CropAspectRatioPreset.ratio4x3,
+              CropAspectRatioPreset.ratio5x3,
+              CropAspectRatioPreset.ratio5x4,
+              CropAspectRatioPreset.ratio7x5,
+              CropAspectRatioPreset.ratio16x9
+            ],
+      androidUiSettings: const AndroidUiSettings(
+          toolbarTitle: 'Farmers Konekt Cropper',
+          toolbarColor: const Color(0xff6C1EFF),
+          toolbarWidgetColor: Colors.white,
+          initAspectRatio: CropAspectRatioPreset.original,
+          lockAspectRatio: false),
+      iosUiSettings: const IOSUiSettings(
+        minimumAspectRatio: 1.0,
+        title: 'Image Cropper',
+
+        // if (cropImage != null) {
+        //   imageFile = croppedFile;
+        //   setState(() {
+        //      state = AppState.cropped;
+        //    });
+        // }
+      ));
+}
 
 class _PostState extends State<Post> {
+  get _imagePicker => null;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -108,8 +156,23 @@ class _PostState extends State<Post> {
                 'Date: ${_date}',
                 style: TextStyle(color: Colors.blue),
               )),
+          Spacer(),
           Row(
-            children: [],
+            children: [
+              IconButton(
+                  onPressed: () async {
+                    final XFile? xfile = await _imagePicker.pickImage(
+                        source: ImageSource.gallery);
+                    if (xfile != null) {
+                      File? myCroppedFile =
+                          await cropImage(imageFile: File(xfile.path));
+                      setState(() {
+                        _postImage = myCroppedFile!;
+                      });
+                    }
+                  },
+                  icon: Icon(Icons.upload)),
+            ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

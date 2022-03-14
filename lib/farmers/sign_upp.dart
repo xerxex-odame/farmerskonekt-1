@@ -1,5 +1,6 @@
 //import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:farmers_konekt/farmers/details.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:flutter/foundation.dart';
 //import 'package:farmers_konekt/comfirmation.dart';
@@ -85,6 +86,27 @@ class _RegisterState extends State<Register> {
                   height: 20.0,
                 ),
                 TextFormField(
+                  controller: phoneNumberController,
+                  onChanged: (value) {
+                    setState(() => userPhoneNumber = value);
+                  },
+                  decoration: const InputDecoration(
+                    icon: const Icon(Icons.person),
+                    hintText: 'Enter phone number',
+                    labelText: 'Enter your Phone',
+                    //border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Enter your Phone number';
+                    } else if (!value.contains('numbers only')) {
+                      return 'please enter phone number';
+                    }
+                    ;
+                    return null;
+                  },
+                ),
+                TextFormField(
                   controller: passwordController,
                   onChanged: (value) {
                     setState(() => userComfirmPassword = value);
@@ -99,7 +121,7 @@ class _RegisterState extends State<Register> {
                   validator: (value) {
                     if (value!.isEmpty) {
                       return 'Enter your password';
-                    } else if (!value.contains('@')) {
+                    } else if (!value.contains('.length > 9')) {
                       return 'please enter password';
                     }
                     ;
@@ -124,7 +146,7 @@ class _RegisterState extends State<Register> {
                   validator: (value) {
                     if (value!.isEmpty) {
                       return 'Commfirm your password';
-                    } else if (!value.contains('@')) {
+                    } else if (!value.contains('.length > 9')) {
                       return 'Required';
                     }
                     ;
@@ -134,20 +156,20 @@ class _RegisterState extends State<Register> {
                 SizedBox(
                   height: 20.0,
                 ),
-                IntlPhoneField(
-                  decoration: InputDecoration(
-                    labelText: 'Phone Number',
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(),
-                    ),
-                  ),
-                  onChanged: (phone) {
-                    print(phone.completeNumber);
-                  },
-                  onCountryChanged: (country) {
-                    print('Country changed to: ' + country.name);
-                  },
-                ),
+                // IntlPhoneField(
+                //   decoration: InputDecoration(
+                //     labelText: 'Phone Number',
+                //     border: OutlineInputBorder(
+                //       borderSide: BorderSide(),
+                //     ),
+                //   ),
+                //   onChanged: (phone) {
+                //     print(phone.completeNumber);
+                //   },
+                //   onCountryChanged: (country) {
+                //     print('Country changed to: ' + country.name);
+                //   },
+                // ),
                 //       final date = await showDatePicker(
                 //     context: context,
                 //     firstDate: DateTime(1900),
@@ -218,6 +240,10 @@ class _RegisterState extends State<Register> {
                             }
                           }
                           ;
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return Details();
+                          }));
                           // if (_formKey.currentState!.validate()) ;
                           // FirebaseAuth auth = FirebaseAuth.instance;
                           // User? user;

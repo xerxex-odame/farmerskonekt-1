@@ -64,21 +64,21 @@ class _UserDashBoardrState extends State<UserDashBoardr> {
         ),
         body: Column(
           children: [
-          Card(
-            child: Column(children: [
-              SizedBox.expand(
-                child: FittedBox(
-                  fit: BoxFit.cover,
-                  child: SizedBox(
-                    width: _controller.value.size.width * 0.5,
-                    height: _controller.value.size.height * 0.5,
-                    child: VideoPlayer(_controller),
-                  ),
-                ),
-              ),
-            ]
-            ),
-          ),
+          // Card(
+          //   child: Column(children: [
+          //     SizedBox.expand(
+          //       child: FittedBox(
+          //         fit: BoxFit.cover,
+          //         child: SizedBox(
+          //           width: _controller.value.size.width * 0.5,
+          //           height: _controller.value.size.height * 0.5,
+          //           child: VideoPlayer(_controller),
+          //         ),
+          //       ),
+          //     ),
+          //   ]
+          //   ),
+          // ),
           Row(
             //mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [

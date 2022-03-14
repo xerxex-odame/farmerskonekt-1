@@ -3,12 +3,32 @@ import 'package:farmers_konekt/farmers/das.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+//   AddUser(
+//     this.firstName,
+//     this.lastName,
+//     this.dateOfBirth,
+//     this.location,
+//     this.region,
+//     this.country,
+//     this.phoneNumber,
+//     this.gender,
+//     this.accountType,
+//     this.farmLand,
+//     this.district,
+//     this.landSize,
+//   );
+
 class Details extends StatefulWidget {
   const Details({Key? key}) : super(key: key);
 
   @override
   State<Details> createState() => _DetailsState();
 }
+
+// _FormValidationWithDropdownState createState() =>
+//     _FormValidationWithDropdownState();
+
+// class _FormValidationWithDropdownState {}
 
 class _DetailsState extends State<Details> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -19,6 +39,9 @@ class _DetailsState extends State<Details> {
   TextEditingController fullNameController = new TextEditingController();
   //TextEditingController districtController = new TextEditingController();
   CollectionReference users = FirebaseFirestore.instance.collection('users');
+  bool _autovalidate = false;
+  late String selectedSalutation;
+  late String name;
 
   String _dropDownValue = "";
 //String _dropDownValue1 = "";
@@ -42,10 +65,12 @@ class _DetailsState extends State<Details> {
 
   @override
   Widget build(BuildContext context) {
+    Object? selectedSalutation;
     return Scaffold(
       body: Container(
         child: Form(
           key: _formKey,
+          //autovalidateMode: _autovalidate,
           child: Column(
             children: [
               TextFormField(
@@ -98,47 +123,88 @@ class _DetailsState extends State<Details> {
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: DropdownButton(
-                    hint: _dropDownValue == ValueKey
-                        ? Text("Dropdown")
-                        : Text(_dropDownValue),
-                    isExpanded: true,
-                    iconSize: 30,
-                    items: [
-                      "Ahafo Region - Goaso",
-                      "Ashanti Region - Kumasi",
-                      "Business School",
-                      "Business School",
-                      "Bono East Region - Techiman",
-                      "Bono East Region - Techiman",
-                      "Eastern Region - Koforidua",
-                      "North East Region - Nalerigu",
-                      "Oti Region - Dambai",
-                      "Northern Region - Tamale",
-                      "Savannah Region - Damango",
-                      "Northern Region - Tamale",
-                      "Upper West Region - Wa",
-                      "Volta Region - Ho",
-                      "Western North Region- Sefwi Wiawso",
-                      "Western Region - Sekondi",
-                    ].map((val) {
-                      return DropdownMenuItem<String>(
-                        alignment: AlignmentDirectional.center,
-                        value: val,
-                        child: Text(val),
-                      );
-                    }).toList(),
-                    onChanged: (val) {
-                      setState(() {
-                        _dropDownValue = val as String;
-                      });
-                    }),
+                  hint: _dropDownValue == ValueKey
+                      ? Text("Dropdown")
+                      : Text(_dropDownValue),
+                  isExpanded: true,
+                  iconSize: 30,
+                  items: [
+                    "Ahafo Region - Goaso",
+                    "Ashanti Region - Kumasi",
+                    "Business School",
+                    "Business School",
+                    "Bono East Region - Techiman",
+                    "Bono East Region - Techiman",
+                    "Eastern Region - Koforidua",
+                    "North East Region - Nalerigu",
+                    "Oti Region - Dambai",
+                    "Northern Region - Tamale",
+                    "Savannah Region - Damango",
+                    "Northern Region - Tamale",
+                    "Upper West Region - Wa",
+                    "Volta Region - Ho",
+                    "Western North Region- Sefwi Wiawso",
+                    "Western Region - Sekondi",
+                  ].map((val) {
+                    return DropdownMenuItem<String>(
+                      alignment: AlignmentDirectional.center,
+                      value: val,
+                      child: Text(val),
+                    );
+                  }).toList(),
+                  onChanged: (salutation) =>
+                      setState(() => selectedSalutation = salutation),
+                  //validator: (value) => value == null ? 'field required' : null,
+                ),
               ),
-              TextButton(
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Dash()));
-                  },
-                  child: Text('Submit')),
+              Center(
+                child: Expanded(
+                  child: ElevatedButton(
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          try {
+                            UserCredential userCredential = await FirebaseAuth
+                                .instance
+                                .createUserWithEmailAndPassword(
+                                    email: "user@example.com",
+                                    password: "SuperSecretPassword!");
+                          } on FirebaseAuthException catch (e) {
+                            if (e.code == 'weak-password') {
+                              print('The password provided is too weak.');
+                            } else if (e.code == 'email-already-in-use') {
+                              print(
+                                  'The account already exists for that email.');
+                            }
+                          } catch (e) {
+                            print(e);
+                          }
+                        }
+                        ;
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return Dash();
+                        }));
+                        // if (_formKey.currentState!.validate()) ;
+                        // FirebaseAuth auth = FirebaseAuth.instance;
+                        // User? user;
+                        // UserCredential userCredential =
+                        //     await auth.createUserWithEmailAndPassword(
+                        //   email: userEmail,
+                        //   password: userPassword,
+                        // );
+
+                        //if(result ==null) {}
+                        //await addUser();
+                      },
+                      child: Text(
+                        'Submit',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.greenAccent,
+                        ),
+                      )),
+                ),
+              ),
             ],
           ),
         ),
