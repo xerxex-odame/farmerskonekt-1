@@ -55,7 +55,7 @@ class _DetailsState extends State<Details> {
           'location': locationController.text,
           // 'accountType': accountTypeController.text,
           'fullName': fullNameController.text,
-          // 'gender': genderController.text,
+         'farmLand': farmLandController.text,
           // 'password': passwordController.text,
           // 'comfirmPassword': comfirmPasswordController.text,
         })
@@ -157,54 +157,54 @@ class _DetailsState extends State<Details> {
                   //validator: (value) => value == null ? 'field required' : null,
                 ),
               ),
-              Center(
-                child: Expanded(
-                  child: ElevatedButton(
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          try {
-                            UserCredential userCredential = await FirebaseAuth
-                                .instance
-                                .createUserWithEmailAndPassword(
-                                    email: "user@example.com",
-                                    password: "SuperSecretPassword!");
-                          } on FirebaseAuthException catch (e) {
-                            if (e.code == 'weak-password') {
-                              print('The password provided is too weak.');
-                            } else if (e.code == 'email-already-in-use') {
-                              print(
-                                  'The account already exists for that email.');
-                            }
-                          } catch (e) {
-                            print(e);
-                          }
-                        }
-                        ;
-                        Navigator.push(context,
-                            MaterialPageRoute(builder: (context) {
-                          return Dash();
-                        }));
-                        // if (_formKey.currentState!.validate()) ;
-                        // FirebaseAuth auth = FirebaseAuth.instance;
-                        // User? user;
-                        // UserCredential userCredential =
-                        //     await auth.createUserWithEmailAndPassword(
-                        //   email: userEmail,
-                        //   password: userPassword,
-                        // );
+              // Center(
+              //   child: Expanded(
+              //     child: ElevatedButton(
+              //         onPressed: () async {
+              //           if (_formKey.currentState!.validate()) {
+              //             try {
+              //               UserCredential userCredential = await FirebaseAuth
+              //                   .instance
+              //                   .createUserWithEmailAndPassword(
+              //                       email: "user@example.com",
+              //                       password: "SuperSecretPassword!");
+              //             } on FirebaseAuthException catch (e) {
+              //               if (e.code == 'weak-password') {
+              //                 print('The password provided is too weak.');
+              //               } else if (e.code == 'email-already-in-use') {
+              //                 print(
+              //                     'The account already exists for that email.');
+              //               }
+              //             } catch (e) {
+              //               print(e);
+              //             }
+              //           }
+              //           ;
+              //           Navigator.push(context,
+              //               MaterialPageRoute(builder: (context) {
+              //             return Dash();
+              //           }));
+              //           // if (_formKey.currentState!.validate()) ;
+              //           // FirebaseAuth auth = FirebaseAuth.instance;
+              //           // User? user;
+              //           // UserCredential userCredential =
+              //           //     await auth.createUserWithEmailAndPassword(
+              //           //   email: userEmail,
+              //           //   password: userPassword,
+              //           // );
 
-                        //if(result ==null) {}
-                        //await addUser();
-                      },
-                      child: Text(
-                        'Submit',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.greenAccent,
-                        ),
-                      )),
-                ),
-              ),
+              //           //if(result ==null) {}
+              //           //await addUser();
+              //         },
+              //         child: Text(
+              //           'Submit',
+              //           textAlign: TextAlign.center,
+              //           style: TextStyle(
+              //             color: Colors.greenAccent,
+              //           ),
+              //         )),
+              //   ),
+              // ),
             ],
           ),
         ),

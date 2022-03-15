@@ -42,19 +42,17 @@ class _ForgState extends State<Forg> {
                 return null;
               },
             ),
-            Center(
-              child: Expanded(
-                  child: ElevatedButton(
+          
+            
+                   ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) ;
                       },
-                      child: Center(child: Text('Submit')))),
-            ),
-            Center(
-              child: Expanded(
-                  child: ElevatedButton(
-                      onPressed: () {}, child: Center(child: Text('Signin')))),
-            ),
+                      child: Center(child: Text('Submit'))),
+            
+            ElevatedButton(
+                      onPressed: () {}, child: Center(child: Text('Signin'))),
+            
           ],
         ),
       )),

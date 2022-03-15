@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:farmers_konekt/farmers/continue.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 
 class Requests extends StatefulWidget {
   const Requests({Key? key}) : super(key: key);
@@ -13,8 +15,9 @@ class _RequestsState extends State<Requests> {
   TextEditingController serviceTypeController = new TextEditingController();
   // TextEditingController comfirmPasswordController = new TextEditingController();
   // TextEditingController dateOfBirthController = new TextEditingController();
-  String _dropDownValue = "region";
-  final Stream<QuerySnapshot>? _types =
+  String _dropDownValue = "Service type";
+  var amount = 0;
+  final Stream<QuerySnapshot> _types =
       FirebaseFirestore.instance.collection('service_types').snapshots();
 
   String acres = '',
@@ -42,6 +45,7 @@ class _RequestsState extends State<Requests> {
   Widget build(BuildContext context) {
     Stream<QuerySnapshot<Map<String, dynamic>>> users =
         FirebaseFirestore.instance.collection('users').snapshots();
+    List<Map<String, dynamic>> det = [];
 
     return Scaffold(
       body: ListView(
@@ -82,39 +86,42 @@ class _RequestsState extends State<Requests> {
               Text('Service Type'),
               StreamBuilder<QuerySnapshot>(
                 stream: _types,
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
+                builder: (BuildContext context,
+                    AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasError) {
-                    return Text("Something went wrong");
+                    print('snapshot err: ${snapshot.data}');
+                    return Text("Something went wrong: ${snapshot.error}");
                   }
 
-                  if (snapshot.hasData && !snapshot.data!.exists) {
-                    return Text("Document does not exist");
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    print('snapshot lod: ${snapshot.data}');
+                    return Text("Loading");
                   }
 
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    Map<String, dynamic> data =
-                        snapshot.data!.data() as Map<String, dynamic>;
-                    debugPrint(data.toString());
-                    return DropdownButton(
-                        hint: _dropDownValue == ValueKey
-                            ? Text("Dropdown")
-                            : Text(_dropDownValue),
-                        isExpanded: true,
-                        iconSize: 30,
-                        items: snapshot.data.map((val) {
-                          return DropdownMenuItem<String>(
-                            alignment: AlignmentDirectional.center,
-                            value: val,
-                            child: Text(val),
-                          );
-                        }).toList(),
-                        onChanged: (val) {
-                          setState(() {
-                            _dropDownValue = val as String;
-                          });
+                  return DropdownButton(
+                      hint: _dropDownValue == ValueKey
+                          ? Text("Dropdown")
+                          : Text(_dropDownValue),
+                      isExpanded: true,
+                      iconSize: 30,
+                      items: List.generate(snapshot.data!.docs.length, (index) {
+                        String name = snapshot.data!.docs[index]['name'];
+                        int _price = snapshot.data!.docs[index]['price'];
+                        det.add({'name': name, 'price': _price});
+                        // print('det: $det');
+                        return DropdownMenuItem<String>(
+                          value: name,
+                          child: Text(
+                            name,
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        );
+                      }),
+                      onChanged: (val) {
+                        setState(() {
+                          _dropDownValue = val as String;
                         });
-                  }
-
+                      });
                   return Text("loading");
                 },
               ),
@@ -129,7 +136,15 @@ class _RequestsState extends State<Requests> {
               TextFormField(
                 //controller: ,
                 onChanged: (value) {
-                  // setState(() =>  = value);
+                  det.forEach((element) {
+                    if (element['name'] == _dropDownValue) {
+                      setState(() {
+                        int val = int.parse(value);
+                        int price = element['price'];
+                        amount = val * price;
+                      });
+                    }
+                  });
                 },
                 decoration: const InputDecoration(
                   //icon: const Icon(Icons.person),
@@ -150,6 +165,7 @@ class _RequestsState extends State<Requests> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  Text('GHC $amount'),
                   Spacer(),
                   Expanded(
                       child: SizedBox(
@@ -231,12 +247,15 @@ class Location extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.book),
-            Text('Request equipment service'),
-          ],
+        Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.book),
+              Text('Request equipment service'),
+            ],
+          ),
         ),
         Divider(
           color: Colors.blueGrey,
@@ -246,7 +265,10 @@ class Location extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(Icons.arrow_back),
-              Text('Enter you location'),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Text('Enter you location'),
+              ),
             ],
           ),
         ),
@@ -257,8 +279,8 @@ class Location extends StatelessWidget {
           },
           decoration: const InputDecoration(
             //icon: const Icon(Icons.person),
-            hintText: '',
-            //labelText: 'Enter your Email/Phone',
+            hintText: 'Enter your Location',
+            labelText: 'Enter Location',
             border: OutlineInputBorder(),
           ),
           validator: (value) {
@@ -280,7 +302,9 @@ class Location extends StatelessWidget {
               child: ElevatedButton(
                   onPressed: () {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => Continue()));
+                        MaterialPageRoute(builder: (context) {
+                      return Continue();
+                    }));
                   },
                   child: const Center(child: Text('Next'))),
             )),
@@ -295,79 +319,79 @@ class Location extends StatelessWidget {
   }
 }
 
-class Continue extends StatefulWidget {
-  const Continue({Key? key}) : super(key: key);
+// class Continue extends StatefulWidget {
+//   const Continue({Key? key}) : super(key: key);
 
-  @override
-  State<Continue> createState() => _ContinueState();
-}
+//   @override
+//   State<Continue> createState() => _ContinueState();
+// }
 
-class _ContinueState extends State<Continue> {
-  String _dropDownValue = "region";
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListView(
-        children: [
-          Row(
-            children: [
-              Icon(Icons.book),
-              Text(
-                'Request equipment service',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-          Divider(
-            color: Colors.blueGrey,
-          ),
-          Row(
-            children: [
-              Icon(Icons.arrow_back),
-              Text('Farmer info'),
-              Text('Enter or select the service required for')
-            ],
-          ),
-          Divider(
-            color: Colors.blueGrey,
-          ),
-          Row(
-            children: [
-              Icon(Icons.person),
-              Text('Farmer'),
-              Row(
-                children: [
-                  Icon(Icons.network_cell),
-                  Text("Nextwork operator (Phone number)"),
-                ],
-              ),
-              Text('Select the mobile nextwork operator phone number'),
-              DropdownButton(
-                  hint: _dropDownValue == ValueKey
-                      ? Text("Dropdown")
-                      : Text(_dropDownValue),
-                  isExpanded: true,
-                  iconSize: 30,
-                  items: [
-                    "TigoAirtel",
-                    "Vodafone",
-                    "MTN",
-                  ].map((val) {
-                    return DropdownMenuItem<String>(
-                      alignment: AlignmentDirectional.center,
-                      value: val,
-                      child: Text(val),
-                    );
-                  }).toList(),
-                  onChanged: (val) {
-                    setState(() {
-                      _dropDownValue = val as String;
-                    });
-                  }),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
+// class _ContinueState extends State<Continue> {
+//   String _dropDownValue = "region";
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: ListView(
+//         children: [
+//           Row(
+//             children: [
+//               Icon(Icons.book),
+//               Text(
+//                 'Request equipment service',
+//                 style: TextStyle(fontWeight: FontWeight.bold),
+//               ),
+//             ],
+//           ),
+//           Divider(
+//             color: Colors.blueGrey,
+//           ),
+//           Row(
+//             children: [
+//               Icon(Icons.arrow_back),
+//               Text('Farmer info'),
+//               Text('Enter or select the service required for')
+//             ],
+//           ),
+//           Divider(
+//             color: Colors.blueGrey,
+//           ),
+//           Row(
+//             children: [
+//               Icon(Icons.person),
+//               Text('Farmer'),
+//               Row(
+//                 children: [
+//                   Icon(Icons.network_cell),
+//                   Text("Nextwork operator (Phone number)"),
+//                 ],
+//               ),
+//               Text('Select the mobile nextwork operator phone number'),
+//               DropdownButton(
+//                   hint: _dropDownValue == ValueKey
+//                       ? Text("Dropdown")
+//                       : Text(_dropDownValue),
+//                   isExpanded: true,
+//                   iconSize: 30,
+//                   items: [
+//                     "TigoAirtel",
+//                     "Vodafone",
+//                     "MTN",
+//                   ].map((val) {
+//                     return DropdownMenuItem<String>(
+//                       alignment: AlignmentDirectional.center,
+//                       value: val,
+//                       child: Text(val),
+//                     );
+//                   }).toList(),
+//                   onChanged: (val) {
+//                     setState(() {
+//                       _dropDownValue = val as String;
+//                     });
+//                   }),
+//             ],
+//           ),
+//         ],
+//       ),
+//     );
+ // }
+//}

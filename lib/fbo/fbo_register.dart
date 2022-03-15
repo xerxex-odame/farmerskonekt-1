@@ -190,9 +190,7 @@ class _FboRegisterState extends State<FboRegister> {
                 SizedBox(
                   height: 20.0,
                 ),
-                Center(
-                  child: Expanded(
-                    child: ElevatedButton(
+                    ElevatedButton(
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
                             try {
@@ -232,8 +230,8 @@ class _FboRegisterState extends State<FboRegister> {
                             color: Colors.greenAccent,
                           ),
                         )),
-                  ),
-                ),
+                  
+                
                 SizedBox(
                   height: 20.0,
                 ),
