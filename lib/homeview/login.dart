@@ -1,3 +1,5 @@
+import 'package:farmers_konekt/farmers/das.dart';
+import 'package:farmers_konekt/farmers/re_register.dart';
 import 'package:farmers_konekt/farmers/sign_upp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -62,35 +64,102 @@ class _LogInState extends State<LogIn> {
                 validator: (value) {
                   if (value!.isEmpty) {
                     return 'Enter your password';
-                  } else if (!value.contains('@')) {
-                    return 'please enter password';
                   }
-                  ;
                   return null;
                 },
               ),
-            ElevatedButton(
-                      onPressed: () async {
-                        if (_formKey.currentState!.validate()) {
-                          try {
-                            UserCredential userCredential = await FirebaseAuth
-                                .instance
-                                .signInWithEmailAndPassword(
-                                    email: "barry.allen@example.com",
-                                    password: "SuperSecretPassword!");
-                          } on FirebaseAuthException catch (e) {
-                            if (e.code == 'user-not-found') {
-                              print('No user found for that email.');
-                            } else if (e.code == 'wrong-password') {
-                              print('Wrong password provided for that user.');
-                            }
-                          }
+              ElevatedButton(
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
+                      try {
+                        UserCredential userCredential = await FirebaseAuth
+                            .instance
+                            .signInWithEmailAndPassword(
+                                email: emailController.text,
+                                password: passwordController.text);
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return Dash();
+                        }));
+                      } on FirebaseAuthException catch (e) {
+                        if (e.code == 'user-not-found') {
+                          print('No user found for that email.');
+                        } else if (e.code == 'wrong-password') {
+                          print('Wrong password provided for that user.');
                         }
-                      },
-                      child: Text(
-                        'Signin',
-                        style: TextStyle(color: Colors.greenAccent),
-                      )),
+                      }
+                    }
+                  },
+                  child: Text(
+                    'Signin',
+                    style: TextStyle(color: Colors.greenAccent),
+                  )),
+              TextButton(
+                onPressed: () {
+                  if (emailController.text.isNotEmpty) {
+                    // Navigator.pop(context);
+                    showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                              title: const Text('Password Reset'),
+                              content: const Text(
+                                  'A Password reset link has been sent to your email'),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: const Text('OK'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            ));
+                  } else if (emailController.text.isEmpty) {
+                    showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                              title: const Text('Enter Email'),
+                              content: const Text('Please enter  your email'),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: const Text('OK'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            ));
+                    // const SnackBar(
+                    //     backgroundColor: Colors.white,
+                    //     content: Center(child: Loading())),
+                    // );
+                    // Navigator.pop(context);
+
+                  }
+                  // final FirebaseAuth firebaseAuth =
+                  //     FirebaseAuth.instance;
+                  // User? currentUser = firebaseAuth.currentUser;
+                  // currentUser?.updatePassword("newpassword");
+                  FirebaseAuth.instance
+                      .sendPasswordResetEmail(email: emailController.text);
+
+                  ///make dynamic
+                },
+                style: TextButton.styleFrom(
+                  elevation: 0,
+                  backgroundColor: Colors.white,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(15.0, 8, 15, 8),
+                  child: Text(
+                    "Forget Password?",
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+              ),
               SizedBox(
                 height: 20.0,
               ),
@@ -103,7 +172,7 @@ class _LogInState extends State<LogIn> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => Register(),
+                              builder: (context) => ReRegister(),
                             ));
                       },
                       child: Text('Farmer')),

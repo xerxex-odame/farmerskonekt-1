@@ -1,21 +1,20 @@
-// import 'package:farmers_konekt/farmers/das.dart';
-import 'package:farmers_konekt/equipment/fbo/user_dashbord.dart';
 import 'package:farmers_konekt/farmers/continue.dart';
-import 'package:farmers_konekt/farmers/dabi_data.dart';
 import 'package:farmers_konekt/farmers/das.dart';
-import 'package:farmers_konekt/farmers/dsh.dart';
-import 'package:farmers_konekt/farmers/requests.dart';
-import 'package:farmers_konekt/farmers/sign_upp.dart';
+import 'package:farmers_konekt/farmers/re_register.dart';
 import 'package:farmers_konekt/fbo/user_dash.dart';
 import 'package:farmers_konekt/firebase_options.dart';
+import 'package:farmers_konekt/hive_service.dart';
 import 'package:farmers_konekt/homeview/login.dart';
+import 'package:farmers_konekt/new.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 //import 'package:farmers_konekt/homeview/login.dart';
 import 'package:splash_screen_view/SplashScreenView.dart';
 import 'package:flutter/material.dart';
 
 import 'note.dart';
+import 'package:provider/provider.dart';
 //import 'package:device_preview/device_preview.dart';
 
 void main() async {
@@ -26,8 +25,16 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(const MyApp());
+  runApp(
+      // (MultiProvider(providers: [
+      // ChangeNotifierProvider<CityEntryViewModel>(
+      //     create: (_) => CityEntryViewModel()),
+      // ChangeNotifierProvider<ForecastViewModel>(
+      //     create: (_) => ForecastViewModel()),
+      ListenableProvider(
+          create: (context) => HiveService(), child: const MyApp()));
 }
+
 // void main() => runApp(
 //       // DevicePreview(
 //       //   enabled: true,
@@ -41,10 +48,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget example1 = SplashScreenView(
-      navigateRoute: Dash(),
+      navigateRoute: LogIn(),
       duration: 5000,
       imageSize: 130,
-      imageSrc: "splashscreen_image.png",
+      imageSrc: "assets/farmers.png",
       text: "Splash Screen",
       textType: TextType.ColorizeAnimationText,
       textStyle: TextStyle(
@@ -67,7 +74,7 @@ class MyApp extends StatelessWidget {
       // darkTheme: ThemeData.dark(),
       //useInheritedMediaQuery: true,
       debugShowCheckedModeBanner: false,
-      home: Requests(),
+      home: ReRegister(),
     );
   }
 }

@@ -13,8 +13,8 @@ class Requests extends StatefulWidget {
 class _RequestsState extends State<Requests> {
   TextEditingController acresController = new TextEditingController();
   TextEditingController serviceTypeController = new TextEditingController();
-  // TextEditingController comfirmPasswordController = new TextEditingController();
-  // TextEditingController dateOfBirthController = new TextEditingController();
+  TextEditingController comfirmPasswordController = new TextEditingController();
+  TextEditingController dateOfBirthController = new TextEditingController();
   String _dropDownValue = "Service type";
   var amount = 0;
   final Stream<QuerySnapshot> _types =
@@ -48,9 +48,28 @@ class _RequestsState extends State<Requests> {
     List<Map<String, dynamic>> det = [];
 
     return Scaffold(
-      body: ListView(
-        children: [
-          Column(
+      backgroundColor: Colors.brown,
+      body: Column(children: [
+        Container(
+          width: MediaQuery.of(context).size.width,
+          height: 250,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              fit: BoxFit.fill,
+              image: AssetImage('assets/tractors.jpg'),
+            ),
+          ),
+        ),
+        Container(
+          height: 370,
+          decoration: BoxDecoration(
+              color: Colors.greenAccent,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(30),
+                topRight: Radius.circular(30),
+              )),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Padding(
                 padding: const EdgeInsets.all(20.0),
@@ -77,7 +96,7 @@ class _RequestsState extends State<Requests> {
                     onPressed: () {},
                     icon: Icon(Icons.arrow_back_ios_new_sharp),
                   ),
-                  Text('Service info'),
+                  Text('Service Type'),
                 ],
               ),
               Divider(
@@ -187,8 +206,8 @@ class _RequestsState extends State<Requests> {
               ),
             ],
           ),
-        ],
-      ),
+        )
+      ]),
     );
   }
 }

@@ -18,6 +18,8 @@ class Note extends HiveObject {
   String email;
   @HiveField(7)
   String accountType;
+   @HiveField(8)
+  String uid;
  
   Note({ 
     required this.fullName,
@@ -28,5 +30,6 @@ class Note extends HiveObject {
     required this.accountType,
      required this.email,
     required this.farmLand,
+    required this.uid,
   });
 }

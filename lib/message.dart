@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 //import 'package:dash_chat/dash_chat.dart';
-import 'package:comment_box/comment/comment.dart';
 
 class Message extends StatefulWidget {
   const Message({Key? key}) : super(key: key);

@@ -25,8 +25,15 @@ class NoteAdapter extends TypeAdapter<Note> {
       accountType: fields[7] as String,
       email: fields[6] as String,
       farmLand: fields[5] as String,
+       uid: fields[8] as String,
     );
   }
+//   <p>Hello,</p>
+// <p>Follow this link to reset your %APP_NAME% password for your %EMAIL% account.</p>
+// <p><a href='%LINK%'>%LINK%</a></p>
+// <p>If you didn’t ask to reset your password, you can ignore this email.</p>
+// <p>Thanks,</p>
+// <p>Your %APP_NAME% team</p>
 
   @override
   void write(BinaryWriter writer, Note obj) {

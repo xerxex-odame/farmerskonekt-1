@@ -111,7 +111,7 @@ class _ContinueState extends State<Continue> {
                     onPressed: () {
                       Navigator.push(context,
                           MaterialPageRoute(builder: (context) {
-                        return Dabidata();
+                        return DabiData();
                       }));
                     },
                     child: const Center(child: Text('Next'))),

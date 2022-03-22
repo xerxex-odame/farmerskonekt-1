@@ -1,12 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farmers_konekt/change_pas.dart';
+import 'package:farmers_konekt/farmers/details.dart';
 import 'package:farmers_konekt/farmers/notification.dart';
 import 'package:farmers_konekt/farmers/requests.dart';
 import 'package:farmers_konekt/farmers/settings.dart';
 //import 'package:farmers_konekt/homeview/login.dart';
 import 'package:farmers_konekt/message.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_charts/sparkcharts.dart';
+import 'package:farmers_konekt/hive_service.dart';
 
 class Dash extends StatefulWidget {
   const Dash({Key? key}) : super(key: key);
@@ -14,6 +18,9 @@ class Dash extends StatefulWidget {
   @override
   State<Dash> createState() => _DashState();
 }
+
+// final Stream<QuerySnapshot> _types =
+//       FirebaseFirestore.instance.collection('user_info').snapshots();
 
 List<_SalesData> data = [
   _SalesData('Jan', 1),
@@ -31,6 +38,20 @@ List<_SalesData> data = [
 ];
 
 class _DashState extends State<Dash> {
+  Map details = {};
+  HiveService hiveService = HiveService();
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  void getDetails() async {
+    Map _details = await hiveService.getUserInfo();
+    setState(() {
+      details = _details;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,9 +72,12 @@ class _DashState extends State<Dash> {
           //   },
           // ),
           IconButton(onPressed: () {}, icon: Icon(Icons.notifications)),
-          CircleAvatar(
-            backgroundColor: Colors.redAccent,
-            child: const Text('ko'),
+          GestureDetector(
+            onTap: (() {}),
+            child: CircleAvatar(
+              backgroundColor: Colors.redAccent,
+              child: const Text('ko'),
+            ),
           ),
           PopupMenuButton(
             //initialValue: 0,
@@ -77,7 +101,7 @@ class _DashState extends State<Dash> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => Settings()));
+                                      builder: (context) => Dash()));
                             },
                             child: Text('Change personal inf')),
                         TextButton(
@@ -85,7 +109,7 @@ class _DashState extends State<Dash> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => Settings()));
+                                      builder: (context) => Dash()));
                             },
                             child: Text('Settings')),
                         TextButton(
@@ -93,7 +117,7 @@ class _DashState extends State<Dash> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => RequestBooking()));
+                                      builder: (context) => Requests()));
                             },
                             child: Text('History')),
                         TextButton(
@@ -101,7 +125,7 @@ class _DashState extends State<Dash> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => Settings()));
+                                      builder: (context) => Requests()));
                             },
                             child: Text('Change Password')),
                         TextButton(
@@ -120,81 +144,89 @@ class _DashState extends State<Dash> {
         ],
       ),
       drawer: Drawer(
-        backgroundColor: Colors.greenAccent,
-        child: ListView(
-          children: [
+          backgroundColor: Colors.greenAccent,
+          child: ListView(children: [
             const DrawerHeader(
               decoration: BoxDecoration(
                 color: Color.fromARGB(255, 47, 101, 145),
               ),
-              child: Text('Seth Abbey'),
+              child: Text(''),
             ),
             Divider(
               color: Colors.blueAccent,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Icon(Icons.chat_sharp),
-                Text('DashBoard'),
-              ],
-            ),
-            Divider(
-              color: Colors.blueAccent,
-            ),
-            Text('Equipment request'),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Icon(Icons.refresh),
-                TextButton(onPressed: () {}, child: Text('All Request')),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Icon(Icons.hide_image_rounded),
-                TextButton(onPressed: () {}, child: Text('Hiring')),
-              ],
-            ),
-            Divider(
-              color: Colors.black,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Text(
-                'Actions',
-                textAlign: TextAlign.start,
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-            Row(
-              children: [
-                Icon(Icons.settings),
-                TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      'Settings',
-                      textAlign: TextAlign.start,
-                      style: TextStyle(color: Colors.white),
-                    )),
-              ],
-            ),
-            Row(
-              children: [
-                Icon(Icons.restart_alt),
-                TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      'Log out',
-                      textAlign: TextAlign.start,
-                      style: TextStyle(color: Colors.white),
-                    )),
-              ],
-            ),
-          ],
-        ),
-      ),
+            Container(
+                height: 240,
+                width: 100,
+                color: Colors.white,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Icon(Icons.chat_sharp),
+                        Text("${details['fullName']}"),
+                      ],
+                    ),
+                    Divider(
+                      color: Colors.blueAccent,
+                    ),
+                    Text('Equipment request'),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Icon(Icons.refresh),
+                        TextButton(
+                            onPressed: () {}, child: Text('All Request')),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Icon(Icons.hide_image_rounded),
+                        TextButton(onPressed: () {}, child: Text('Hiring')),
+                      ],
+                    ),
+                    Divider(
+                      color: Colors.black,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Text(
+                        'Actions',
+                        textAlign: TextAlign.start,
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        Icon(Icons.settings),
+                        TextButton(
+                            onPressed: () {},
+                            child: Text(
+                              'Settings',
+                              textAlign: TextAlign.start,
+                              style: TextStyle(color: Colors.white),
+                            )),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Icon(Icons.restart_alt),
+                        TextButton(
+                            onPressed: () {},
+                            child: Text(
+                              'Log out',
+                              textAlign: TextAlign.start,
+                              style: TextStyle(color: Colors.white),
+                            )),
+                      ],
+                    ),
+                  ],
+                )),
+          ])),
       body: ListView(children: <Widget>[
         SizedBox(
           height: 200,
@@ -208,9 +240,12 @@ class _DashState extends State<Dash> {
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Container(
-                    color: Color.fromARGB(255, 181, 199, 230),
+                    height: 200,
+                    width: 250,
+                    color: Color.fromARGB(255, 183, 190, 201),
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -249,31 +284,36 @@ class _DashState extends State<Dash> {
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Container(
+                    height: 200,
+                    width: 250,
                     color: Colors.blueAccent,
-                    child: Column(children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text('0'),
-                          SizedBox(
-                            width: 40,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('0'),
+                              SizedBox(
+                                width: 40,
+                              ),
+                              Icon(Icons.refresh_rounded)
+                            ],
                           ),
-                          Icon(Icons.refresh_rounded)
-                        ],
-                      ),
-                      Text('Pending Request'),
-                      Divider(color: Colors.lightBlue),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('View'),
-                          SizedBox(
-                            width: 40,
-                          ),
-                          Icon(Icons.forward),
-                        ],
-                      )
-                    ]),
+                          Text('Pending Request'),
+                          Divider(color: Colors.lightBlue),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('View'),
+                              SizedBox(
+                                width: 40,
+                              ),
+                              Icon(Icons.forward),
+                            ],
+                          )
+                        ]),
                   ),
                 ),
               ),
@@ -282,31 +322,36 @@ class _DashState extends State<Dash> {
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Container(
-                    color: Colors.blueAccent,
-                    child: Column(children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    height: 200,
+                    width: 250,
+                    color: Color.fromARGB(255, 230, 215, 77),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text('0'),
-                          SizedBox(
-                            width: 40,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('0'),
+                              SizedBox(
+                                width: 40,
+                              ),
+                              Icon(Icons.refresh_rounded)
+                            ],
                           ),
-                          Icon(Icons.refresh_rounded)
-                        ],
-                      ),
-                      Text('Assigned Request'),
-                      Divider(color: Colors.lightBlue),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('View'),
-                          SizedBox(
-                            width: 40,
-                          ),
-                          Icon(Icons.forward),
-                        ],
-                      )
-                    ]),
+                          Text('Assigned Request'),
+                          Divider(color: Colors.lightBlue),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('View'),
+                              SizedBox(
+                                width: 40,
+                              ),
+                              Icon(Icons.forward),
+                            ],
+                          )
+                        ]),
                   ),
                 ),
               ),
@@ -315,31 +360,36 @@ class _DashState extends State<Dash> {
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Container(
-                    color: Colors.blueAccent,
-                    child: Column(children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    height: 200,
+                    width: 250,
+                    color: Color.fromRGBO(77, 230, 146, 1),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text('0'),
-                          SizedBox(
-                            width: 40,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('0'),
+                              SizedBox(
+                                width: 40,
+                              ),
+                              Icon(Icons.refresh_rounded)
+                            ],
                           ),
-                          Icon(Icons.refresh_rounded)
-                        ],
-                      ),
-                      Text('Completed Request'),
-                      Divider(color: Colors.lightBlue),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('View'),
-                          SizedBox(
-                            width: 40,
-                          ),
-                          Icon(Icons.forward),
-                        ],
-                      )
-                    ]),
+                          Text('Completed Request'),
+                          Divider(color: Colors.lightBlue),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('View'),
+                              SizedBox(
+                                width: 40,
+                              ),
+                              Icon(Icons.forward),
+                            ],
+                          )
+                        ]),
                   ),
                 ),
               ),
@@ -348,31 +398,36 @@ class _DashState extends State<Dash> {
                 child: Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: Container(
-                    color: Colors.blueAccent,
-                    child: Column(children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    height: 200,
+                    width: 250,
+                    color: Color(0xFFF34B4B),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text('0'),
-                          SizedBox(
-                            width: 40,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('0'),
+                              SizedBox(
+                                width: 40,
+                              ),
+                              Icon(Icons.refresh_rounded)
+                            ],
                           ),
-                          Icon(Icons.refresh_rounded)
-                        ],
-                      ),
-                      Text('Cancelled Request'),
-                      Divider(color: Colors.lightBlue),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('View'),
-                          SizedBox(
-                            width: 40,
-                          ),
-                          Icon(Icons.forward),
-                        ],
-                      )
-                    ]),
+                          Text('Cancelled Request'),
+                          Divider(color: Colors.lightBlue),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('View'),
+                              SizedBox(
+                                width: 40,
+                              ),
+                              Icon(Icons.forward),
+                            ],
+                          )
+                        ]),
                   ),
                 ),
               ),
@@ -449,6 +504,8 @@ class _DashState extends State<Dash> {
     );
   }
 }
+
+class $details {}
 
 class _SalesData {
   _SalesData(this.year, this.sales);
