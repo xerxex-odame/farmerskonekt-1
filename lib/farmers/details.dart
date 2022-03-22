@@ -51,7 +51,8 @@ class _DetailsState extends State<Details> {
 
   Future<void> addUser() async {
     return users
-        .add({
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .set({
           'region': regionController.text,
           'location': locationController.text,
           // 'accountType': accountTypeController.text,
@@ -136,8 +137,6 @@ class _DetailsState extends State<Details> {
                     items: [
                       "Ahafo Region - Goaso",
                       "Ashanti Region - Kumasi",
-                      "Business School",
-                      "Business School",
                       "Bono East Region - Techiman",
                       "Bono East Region - Techiman",
                       "Eastern Region - Koforidua",

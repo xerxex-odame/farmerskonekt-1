@@ -43,7 +43,8 @@ String userPassword = '',
 Future<void> addUser() {
   // Call the user's CollectionReference to add a new user
   return users
-      .add({
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .set({
         'dateOfBirth': dateOfBirthController.text,
         'phoneNumber': phoneNumberController.text,
         'accountType': accountTypeController.text,
@@ -71,15 +72,15 @@ class _ReRegisterState extends State<ReRegister> {
           image: DecorationImage(
               image: AssetImage('assets/tractors.jpg'), fit: BoxFit.cover),
         ),
-        child: Container(
-          width: screenWidth,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(colors: [
-              Colors.green[800]!.withOpacity(0.7),
-              Colors.black.withOpacity(0.5),
-              Color.fromARGB(255, 0, 1, 2).withOpacity(0.9)
-            ]),
-          ),
+        //child: Container(
+         // width: screenWidth,
+         // decoration: BoxDecoration(
+           // gradient: LinearGradient(colors: [
+              // Colors.green[800]!.withOpacity(0.9),
+             // Colors.black.withOpacity(0.5),
+              //Color.fromARGB(255, 0, 1, 2).withOpacity(0.9)
+            //]),
+          //),
           child: Form(
               key: _formKey,
               child: Column(
@@ -115,7 +116,7 @@ class _ReRegisterState extends State<ReRegister> {
                     },
                     decoration: const InputDecoration(
                       icon: const Icon(Icons.person),
-                      hintText: 'Enter phone number',
+                     // hintText: 'Enter phone number',
                       labelText: 'Enter your Phone',
                       //border: OutlineInputBorder(),
                     ),
@@ -250,7 +251,7 @@ class _ReRegisterState extends State<ReRegister> {
                 ],
               )),
         ),
-      ),
+     // ),
     );
   }
 }

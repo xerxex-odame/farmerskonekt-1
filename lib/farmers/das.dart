@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farmers_konekt/change_pas.dart';
 import 'package:farmers_konekt/farmers/details.dart';
+import 'package:farmers_konekt/farmers/firebase_operation.dart';
 import 'package:farmers_konekt/farmers/notification.dart';
 import 'package:farmers_konekt/farmers/requests.dart';
 import 'package:farmers_konekt/farmers/settings.dart';
+import 'package:farmers_konekt/homeview/login.dart';
 //import 'package:farmers_konekt/homeview/login.dart';
 import 'package:farmers_konekt/message.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -42,11 +44,14 @@ class _DashState extends State<Dash> {
   HiveService hiveService = HiveService();
   @override
   void initState() {
+    getDetails();
     super.initState();
   }
 
   void getDetails() async {
+    await getFirestoreDoc();
     Map _details = await hiveService.getUserInfo();
+    print(_details);
     setState(() {
       details = _details;
     });
@@ -145,88 +150,92 @@ class _DashState extends State<Dash> {
       ),
       drawer: Drawer(
           backgroundColor: Colors.greenAccent,
-          child: ListView(children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Color.fromARGB(255, 47, 101, 145),
+          child: ListView(
+            children: [
+              const DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 47, 101, 145),
+                ),
+                child: Text(''),
               ),
-              child: Text(''),
-            ),
-            Divider(
-              color: Colors.blueAccent,
-            ),
-            Container(
-                height: 240,
-                width: 100,
-                color: Colors.white,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Icon(Icons.chat_sharp),
-                        Text("${details['fullName']}"),
-                      ],
-                    ),
-                    Divider(
-                      color: Colors.blueAccent,
-                    ),
-                    Text('Equipment request'),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Icon(Icons.refresh),
-                        TextButton(
-                            onPressed: () {}, child: Text('All Request')),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Icon(Icons.hide_image_rounded),
-                        TextButton(onPressed: () {}, child: Text('Hiring')),
-                      ],
-                    ),
-                    Divider(
-                      color: Colors.black,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(12.0),
+              Divider(
+                color: Colors.blueAccent,
+              ),
+              // Container(
+              //     height: 240,
+              //     width: 100,
+              //     color: Colors.white,
+              //     child: Column(
+              //       crossAxisAlignment: CrossAxisAlignment.center,
+              //       mainAxisAlignment: MainAxisAlignment.center,
+              //       children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Icon(Icons.chat_sharp),
+                  Text("${details['fullName']}"),
+                ],
+              ),
+              Divider(
+                color: Colors.blueAccent,
+              ),
+              Text('Equipment request'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Icon(Icons.refresh),
+                  TextButton(onPressed: () {}, child: Text('All Request')),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Icon(Icons.hide_image_rounded),
+                  TextButton(onPressed: () {}, child: Text('Hiring')),
+                ],
+              ),
+              Divider(
+                color: Colors.black,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Text(
+                  'Actions',
+                  textAlign: TextAlign.start,
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+              Row(
+                children: [
+                  Icon(Icons.settings),
+                  TextButton(
+                      onPressed: () {},
                       child: Text(
-                        'Actions',
+                        'Settings',
                         textAlign: TextAlign.start,
                         style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        Icon(Icons.settings),
-                        TextButton(
-                            onPressed: () {},
-                            child: Text(
-                              'Settings',
-                              textAlign: TextAlign.start,
-                              style: TextStyle(color: Colors.white),
-                            )),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Icon(Icons.restart_alt),
-                        TextButton(
-                            onPressed: () {},
-                            child: Text(
-                              'Log out',
-                              textAlign: TextAlign.start,
-                              style: TextStyle(color: Colors.white),
-                            )),
-                      ],
-                    ),
-                  ],
-                )),
-          ])),
+                      )),
+                ],
+              ),
+              Row(
+                children: [
+                  Icon(Icons.restart_alt),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return LogIn();
+                        }));
+                      },
+                      child: Text(
+                        'Log out',
+                        textAlign: TextAlign.start,
+                        style: TextStyle(color: Colors.white),
+                      )),
+                ],
+              ),
+            ],
+          )),
       body: ListView(children: <Widget>[
         SizedBox(
           height: 200,

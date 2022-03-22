@@ -79,9 +79,9 @@ class HiveService extends ChangeNotifier {
     return box.get(key);
   }
 
-  Future<Map> getUserInfo() async{
-    Box box = await Hive.openBox(noteHiveBox);
-    // Box box = Hive.box(noteHiveBox);
+  Map getUserInfo() {
+    // Box box = await Hive.openBox(noteHiveBox);
+    Box box = Hive.box(noteHiveBox);
     print('box:' + box.toMap().toString());
     return box.toMap()['user_info'];
   }

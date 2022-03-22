@@ -1,4 +1,5 @@
 import 'package:farmers_konekt/farmers/das.dart';
+import 'package:farmers_konekt/farmers/firebase_operation.dart';
 import 'package:farmers_konekt/farmers/re_register.dart';
 import 'package:farmers_konekt/farmers/sign_upp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -77,6 +78,7 @@ class _LogInState extends State<LogIn> {
                             .signInWithEmailAndPassword(
                                 email: emailController.text,
                                 password: passwordController.text);
+                        await getFirestoreDoc();
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
                           return Dash();
