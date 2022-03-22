@@ -74,7 +74,7 @@ class MyApp extends StatelessWidget {
       // darkTheme: ThemeData.dark(),
       //useInheritedMediaQuery: true,
       debugShowCheckedModeBanner: false,
-      home: ReRegister(),
+      home: Dash(),
     );
   }
 }

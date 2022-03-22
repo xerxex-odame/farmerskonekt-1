@@ -22,7 +22,7 @@ Future<bool> updateUserProfile({required Map<String, dynamic> data}) async {
   return isSuccessful;
 }
 
-Future<void> getFirestoreDoc() async {
+Future<void> getFirestoreDoc({String? docid}) async {
   User? user = await getCurrentUser();
   CollectionReference collection =
       FirebaseFirestore.instance.collection('users');

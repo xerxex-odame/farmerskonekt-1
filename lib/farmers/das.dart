@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farmers_konekt/change_pas.dart';
 import 'package:farmers_konekt/farmers/details.dart';
@@ -10,9 +13,14 @@ import 'package:farmers_konekt/homeview/login.dart';
 import 'package:farmers_konekt/message.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_charts/sparkcharts.dart';
 import 'package:farmers_konekt/hive_service.dart';
+
+import 'package:path/path.dart' as p;
+
+import '../equipment/fbo/post.dart';
 
 class Dash extends StatefulWidget {
   const Dash({Key? key}) : super(key: key);
@@ -21,8 +29,41 @@ class Dash extends StatefulWidget {
   State<Dash> createState() => _DashState();
 }
 
-// final Stream<QuerySnapshot> _types =
-//       FirebaseFirestore.instance.collection('user_info').snapshots();
+final ImagePicker _imagePicker = ImagePicker();
+///////////////////////////Image Cropper////////////////////////////////////////
+Future<String> uploadFile() async {
+  firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance
+      .ref()
+      .child('images')
+      .child('defaultProfile.png');
+  File? _profileImage;
+  var storageReference = firebase_storage.FirebaseStorage.instance
+      .ref()
+      .child('profile_image/${p.basename(_profileImage!.path)}');
+  var uploadTask = await storageReference.putFile(_profileImage!);
+  print('Profile Image Uploaded');
+  String returnURL = await storageReference.getDownloadURL();
+  return returnURL;
+}
+
+final Stream<QuerySnapshot> _postStream =
+    FirebaseFirestore.instance.collection('profileImage').snapshots();
+CollectionReference profileImage =
+    FirebaseFirestore.instance.collection('profileImage');
+
+Future<void> addProfile() async {
+  // Call the user's CollectionReference to add a new user
+  HiveService hiveService = HiveService();
+  String profile = hiveService.getItem('profileImg');
+  String downloadUrl = await uploadFile();
+  profile == downloadUrl;
+  return profileImage
+      .add({
+        'profile_img': profile,
+      })
+      .then((value) => print("Profile Image Added"))
+      .catchError((error) => print("Failed to add Profile Image: $error"));
+}
 
 List<_SalesData> data = [
   _SalesData('Jan', 1),
@@ -42,6 +83,8 @@ List<_SalesData> data = [
 class _DashState extends State<Dash> {
   Map details = {};
   HiveService hiveService = HiveService();
+
+  late File _profileImage;
   @override
   void initState() {
     getDetails();
@@ -152,14 +195,70 @@ class _DashState extends State<Dash> {
           backgroundColor: Colors.greenAccent,
           child: ListView(
             children: [
-              const DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 47, 101, 145),
+              Container(
+                transform: Matrix4.translationValues(0.0, -70.0, 0.0),
+                child: CircleAvatar(
+                  radius: 90.0,
+                  backgroundColor: Color.fromRGBO(105, 240, 174, 1),
+                  child: CircleAvatar(
+                      child: Align(
+                        alignment: Alignment.bottomRight,
+                        child: CircleAvatar(
+                          backgroundColor: Colors.greenAccent,
+                          radius: 20.0,
+                          child: IconButton(
+                            onPressed: () async {
+                              final XFile? xfile = await _imagePicker.pickImage(
+                                  source: ImageSource.gallery);
+                              print('xfile:::::: ${xfile}');
+                              if (xfile != null) {
+                                File? myCroppedFile = await cropImage(
+                                    imageFile: File(xfile.path));
+                                setState(() {
+                                  _profileImage = myCroppedFile!;
+                                });
+                                String url = await uploadFile();
+
+                                User? user = await getCurrentUser();
+
+                                await updateUserProfile(
+                                    data: {"profile_pic": url});
+                                await getFirestoreDoc(docid: user!.uid);
+
+                                setState(() {});
+
+                                // _setState(() {
+                                //   isImagePicked = true;
+                                // });
+                              }
+
+                              User? user = FirebaseAuth.instance.currentUser;
+                              HiveService hiveService = HiveService();
+                              // UserIdentifier u = UserIdentifier();
+                              // u.setprofileImg = user!.profileImg!;
+                              // await hiveService.addProfile(u);
+                              // UserIdentifier _profileImg = UserIdentifier(
+
+                              //  profileImg:profileImage.toString()
+                              //   );
+
+                              //   await hiveService.addItem(_profileImg);
+                            },
+                            icon: Icon(
+                              Icons.camera_alt,
+                              color: Colors.white,
+                            ),
+                            // size: 15.0,
+                            color: Color(0xFF404040),
+                          ),
+                        ),
+                      ),
+                      radius: 87.0,
+                      backgroundImage: NetworkImage('${details['profile_pic']}'
+                          //  ' postImage: snapshot.data!.docs[index]['profile_img']',
+                          // 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80'),
+                          )),
                 ),
-                child: Text(''),
-              ),
-              Divider(
-                color: Colors.blueAccent,
               ),
               // Container(
               //     height: 240,
@@ -221,7 +320,9 @@ class _DashState extends State<Dash> {
                 children: [
                   Icon(Icons.restart_alt),
                   TextButton(
-                      onPressed: () {
+                      onPressed: () async {
+                        await FirebaseAuth.instance.signOut();
+                        await hiveService.clearUserData();
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
                           return LogIn();
