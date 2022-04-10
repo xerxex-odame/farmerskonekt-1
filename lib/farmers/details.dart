@@ -100,25 +100,24 @@ class _DetailsState extends State<Details> {
                   },
                 ),
                 TextFormField(
-                  controller: fullNameController,
-                  onChanged: (value) {
-                    //userFullName = value;
-                  },
-                  decoration: const InputDecoration(
-                    icon: const Icon(Icons.person),
-                    hintText: 'Enter farm location',
-                    labelText: 'Enter Farm location',
+                    controller: locationController,
+                    onChanged: (value) {
+                      setState(() => location = value);
+                    },
+                    decoration: const InputDecoration(
+                      icon: const Icon(Icons.person),
+                     // hintText: 'Enter phone number',
+                      labelText: 'Enter farm location',
+                      //border: OutlineInputBorder(),
+                    ),
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Enter your farm location';
+                      }
+        ;
+                      return null;
+                    },
                   ),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Enter your farm location';
-                    } else if (!value.contains('letters only')) {
-                      return 'requied';
-                    }
-                    ;
-                    return null;
-                  },
-                ),
                 Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Text(

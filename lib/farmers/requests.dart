@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:farmers_konekt/farmers/continue.dart';
 import 'package:flutter/material.dart';
+import 'package:glassmorphism/glassmorphism.dart';
 import 'package:hive/hive.dart';
 
 class Requests extends StatefulWidget {
@@ -48,167 +49,187 @@ class _RequestsState extends State<Requests> {
     List<Map<String, dynamic>> det = [];
 
     return Scaffold(
-      backgroundColor: Colors.brown,
-      body: Column(children: [
-        Container(
-          width: MediaQuery.of(context).size.width,
-          height: 250,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              fit: BoxFit.fill,
-              image: AssetImage('assets/tractors.jpg'),
-            ),
-          ),
-        ),
-        Container(
-          height: 370,
-          decoration: BoxDecoration(
-              color: Colors.greenAccent,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30),
-                topRight: Radius.circular(30),
-              )),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Row(
-                  children: [
-                    Icon(Icons.book),
-                    Text('Request equipment service'),
+        backgroundColor: Colors.brown,
+        // ignore: dead_code
+        body: Center(
+          child: Container(
+              height: double.infinity,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: Image.asset("assets/tractors.jpg").image,
+                    fit: BoxFit.cover),
+              ),
+              child: Center(
+                  child: GlassmorphicContainer(
+                width: 350,
+                height: 750,
+                borderRadius: 20,
+                blur: 20,
+                alignment: Alignment.bottomCenter,
+                border: 2,
+                linearGradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      Color(0xFFffffff).withOpacity(0.1),
+                      Color(0xFFFFFFFF).withOpacity(0.05),
+                    ],
+                    stops: [
+                      0.1,
+                      1,
+                    ]),
+                borderGradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFFffffff).withOpacity(0.5),
+                    Color((0xFFFFFFFF)).withOpacity(0.5),
                   ],
                 ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Hiring'),
-                  IconButton(onPressed: () {}, icon: Icon(Icons.cut_sharp)),
-                ],
-              ),
-              Divider(
-                color: Colors.blueGrey,
-              ),
-              Row(
-                children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.arrow_back_ios_new_sharp),
-                  ),
-                  Text('Service Type'),
-                ],
-              ),
-              Divider(
-                color: Colors.black,
-              ),
-              Text('Service Type'),
-              StreamBuilder<QuerySnapshot>(
-                stream: _types,
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.hasError) {
-                    print('snapshot err: ${snapshot.data}');
-                    return Text("Something went wrong: ${snapshot.error}");
-                  }
+                child: ListView(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Row(
+                        children: [
+                          Icon(Icons.book),
+                          Text('Request equipment service'),
+                        ],
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('Hiring'),
+                        IconButton(
+                            onPressed: () {}, icon: Icon(Icons.cut_sharp)),
+                      ],
+                    ),
+                    Divider(
+                      color: Colors.blueGrey,
+                    ),
+                    Row(
+                      children: [
+                        IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.arrow_back_ios_new_sharp),
+                        ),
+                        Text('Service Type'),
+                      ],
+                    ),
+                    Divider(
+                      color: Colors.black,
+                    ),
+                    Text('Service Type'),
+                    StreamBuilder<QuerySnapshot>(
+                      stream: _types,
+                      builder: (BuildContext context,
+                          AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (snapshot.hasError) {
+                          print('snapshot err: ${snapshot.data}');
+                          return Text(
+                              "Something went wrong: ${snapshot.error}");
+                        }
 
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    print('snapshot lod: ${snapshot.data}');
-                    return Text("Loading");
-                  }
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          print('snapshot lod: ${snapshot.data}');
+                          return Text("Loading");
+                        }
 
-                  return DropdownButton(
-                      hint: _dropDownValue == ValueKey
-                          ? Text("Dropdown")
-                          : Text(_dropDownValue),
-                      isExpanded: true,
-                      iconSize: 30,
-                      items: List.generate(snapshot.data!.docs.length, (index) {
-                        String name = snapshot.data!.docs[index]['name'];
-                        int _price = snapshot.data!.docs[index]['price'];
-                        det.add({'name': name, 'price': _price});
-                        // print('det: $det');
-                        return DropdownMenuItem<String>(
-                          value: name,
-                          child: Text(
-                            name,
-                            style: TextStyle(color: Colors.black),
-                          ),
-                        );
-                      }),
-                      onChanged: (val) {
-                        setState(() {
-                          _dropDownValue = val as String;
+                        return DropdownButton(
+                            hint: _dropDownValue == ValueKey
+                                ? Text("Dropdown")
+                                : Text(_dropDownValue),
+                            isExpanded: true,
+                            iconSize: 30,
+                            items: List.generate(snapshot.data!.docs.length,
+                                (index) {
+                              String name = snapshot.data!.docs[index]['name'];
+                              int _price = snapshot.data!.docs[index]['price'];
+                              det.add({'name': name, 'price': _price});
+                              // print('det: $det');
+                              return DropdownMenuItem<String>(
+                                value: name,
+                                child: Text(
+                                  name,
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                              );
+                            }),
+                            onChanged: (val) {
+                              setState(() {
+                                _dropDownValue = val as String;
+                              });
+                            });
+                        return Text("loading");
+                      },
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      // child: Text(
+                      //   'choose your region',
+                      //   style: TextStyle(fontWeight: FontWeight.bold),
+                      // ),
+                    ),
+                    Text("Acre(s)"),
+                    TextFormField(
+                      //controller: ,
+                      onChanged: (value) {
+                        det.forEach((element) {
+                          if (element['name'] == _dropDownValue) {
+                            setState(() {
+                              int val = int.parse(value);
+                              int price = element['price'];
+                              amount = val * price;
+                            });
+                          }
                         });
-                      });
-                  return Text("loading");
-                },
-              ),
-              Padding(
-                padding: const EdgeInsets.all(12.0),
-                // child: Text(
-                //   'choose your region',
-                //   style: TextStyle(fontWeight: FontWeight.bold),
-                // ),
-              ),
-              Text("Acre(s)"),
-              TextFormField(
-                //controller: ,
-                onChanged: (value) {
-                  det.forEach((element) {
-                    if (element['name'] == _dropDownValue) {
-                      setState(() {
-                        int val = int.parse(value);
-                        int price = element['price'];
-                        amount = val * price;
-                      });
-                    }
-                  });
-                },
-                decoration: const InputDecoration(
-                  //icon: const Icon(Icons.person),
-                  hintText: '',
-                  //labelText: 'Enter your Email/Phone',
-                  border: OutlineInputBorder(),
+                      },
+                      decoration: const InputDecoration(
+                        //icon: const Icon(Icons.person),
+                        hintText: '',
+                        //labelText: 'Enter your Email/Phone',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return '';
+                        } else if (!value.contains('number')) {
+                          return '';
+                        }
+                        ;
+                        return null;
+                      },
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('GHC $amount'),
+                        Spacer(),
+                        Expanded(
+                            child: SizedBox(
+                          width: 10,
+                          child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return Payment();
+                                }));
+                              },
+                              child: Center(child: Text('Next'))),
+                        )),
+                        Icon(Icons.arrow_forward)
+                      ],
+                    ),
+                    Divider(
+                      color: Colors.blueGrey,
+                    ),
+                  ],
                 ),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return '';
-                  } else if (!value.contains('number')) {
-                    return '';
-                  }
-                  ;
-                  return null;
-                },
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('GHC $amount'),
-                  Spacer(),
-                  Expanded(
-                      child: SizedBox(
-                    width: 10,
-                    child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                            return Payment();
-                          }));
-                        },
-                        child: Center(child: Text('Next'))),
-                  )),
-                  Icon(Icons.arrow_forward)
-                ],
-              ),
-              Divider(
-                color: Colors.blueGrey,
-              ),
-            ],
-          ),
-        )
-      ]),
-    );
+              ))),
+        ));
   }
 }
 

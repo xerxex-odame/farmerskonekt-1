@@ -1,6 +1,8 @@
 import 'package:farmers_konekt/farmers/continue.dart';
 import 'package:farmers_konekt/farmers/das.dart';
+import 'package:farmers_konekt/farmers/newmap.dart';
 import 'package:farmers_konekt/farmers/re_register.dart';
+import 'package:farmers_konekt/farmers/requests.dart';
 import 'package:farmers_konekt/fbo/user_dash.dart';
 import 'package:farmers_konekt/firebase_options.dart';
 import 'package:farmers_konekt/hive_service.dart';
@@ -48,7 +50,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget example1 = SplashScreenView(
-      navigateRoute: LogIn(),
+      navigateRoute: Dash(),
       duration: 5000,
       imageSize: 130,
       imageSrc: "assets/farmers.png",
@@ -74,7 +76,7 @@ class MyApp extends StatelessWidget {
       // darkTheme: ThemeData.dark(),
       //useInheritedMediaQuery: true,
       debugShowCheckedModeBanner: false,
-      home: Dash(),
+      home: Requests(),
     );
   }
 }

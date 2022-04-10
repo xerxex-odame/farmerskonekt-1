@@ -176,10 +176,10 @@ class _ReRegisterState extends State<ReRegister> {
                   SizedBox(
                     height: 20.0,
                   ),
-                  Center(child: Text('Choose your account type')),
-                  SizedBox(
-                    height: 20.0,
-                  ),
+                  // Center(child: Text('Choose your account type')),
+                  // SizedBox(
+                  //   height: 20.0,
+                  // ),
                   // Row(children: [
                   //   new RadioListTile<int>(
                   //     value: 0,
