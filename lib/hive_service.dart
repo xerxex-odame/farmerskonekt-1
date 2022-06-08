@@ -31,18 +31,18 @@ class HiveService extends ChangeNotifier {
     box.clear();
   }
 
-  Future<void> addSignUpItem(Note note) async {
-    Box box = await Hive.openBox(noteHiveBox);
-    await box.clear();
-    box.put('uid', note.uid);
+  //Future<void> addSignUpItem(Note note) async {
+    //Box box = await Hive.openBox(noteHiveBox);
+    //await box.clear();
+   // box.put('uid', note.uid);
     // box.put("region", note.region);
-    box.put("phoneNumber", note.phoneNumber);
-    box.put("gender", note.gender);
-    box.put("location", note.location);
-    box.put("email", note.email);
-    box.put("accountType", note.accountType);
-    box.put("fullName", note.fullName);
-    notifyListeners();
+   // box.put("phoneNumber", note.phoneNumber);
+   // box.put("gender", note.gender);
+    //box.put("location", note.location);
+    //box.put("email", note.email);
+    //box.put("accountType", note.accountType);
+   // box.put("fullName", note.fullName);
+   // notifyListeners();
   }
 
   Future<void> addDetailsItem(Note note) async {
